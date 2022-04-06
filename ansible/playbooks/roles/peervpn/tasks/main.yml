@@ -1,0 +1,18 @@
+---
+- name: "PEERVPN | Create a directory if it does not exist"
+  file:
+    path: "{{ build_dir }}/peervpnsrc"
+    state: directory
+
+- name: Git checkout
+  ansible.builtin.git:
+    repo: 'https://github.com/peervpn/peervpn.git'
+    dest: "{{ build_dir }}/peervpnsrc"
+    force: true
+
+- name: "PEERVPN | Buld"
+  shell:
+    cmd: "cd {{ build_dir }}/peervpnsrc && cc -O2 -I{{ build_dir }}/libssl/{{ libssl_ver }}/include peervpn.c -o {{ build_dir }}/peervpn {{ build_dir }}/libssl/{{ libssl_ver }}/crypto/.libs/libcrypto.a -lpthread" 
+
+- import_tasks: deb.yml
+  tags: deb

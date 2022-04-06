@@ -1,0 +1,10 @@
+---
+all:
+    children:
+        builder:
+            hosts:
+                builder: { ansible_host: 192.168.0.101, ansible_port: 2222 }
+    vars:
+        build_dir: "/tmp/buld"
+        libssl_ver: "libressl-3.4.2"
+        peervpn_ver: "0.044"

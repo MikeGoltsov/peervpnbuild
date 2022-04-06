@@ -1,0 +1,16 @@
+---
+- name:  "libssl | Create a directory if it does not exist"
+  file:
+    path: "{{ build_dir }}/libssl"
+    state: directory
+
+- name: "libssl | Unpack"
+  unarchive:
+    src: "{{ libssl_url }}/{{ libssl_ver }}.tar.gz"
+    dest: "{{ build_dir }}/libssl"
+    validate_certs: false
+    remote_src: yes
+
+- name: "libssl | Buld"
+  shell:
+    cmd: "cd {{ build_dir }}/libssl/{{ libssl_ver }} && ./configure && make"

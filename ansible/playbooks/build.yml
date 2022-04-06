@@ -1,0 +1,26 @@
+---
+- hosts: builder
+  gather_facts: no
+  become: true
+  pre_tasks:        
+    - name: install packages
+      apt:
+        name: "{{ item }}"
+      loop:
+        - curl
+        - wget
+        - make
+        - gcc
+        - git
+        - dpkg-dev
+      
+    - name: Check if libssl has build
+      stat:
+        path: "{{ build_dir }}/libssl/{{ libssl_ver }}/crypto/.libs/libcrypto.a"
+      register: libssl_buld
+
+  roles:
+      - role: libssl   # build libssl
+        when: not libssl_buld.stat.exists
+
+      - role: peervpn  # build peervpn bin

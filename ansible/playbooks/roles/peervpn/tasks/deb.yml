@@ -1,0 +1,38 @@
+---
+- name: "PEERVPN - deb | Create a directory if it does not exist"
+  file:
+    path: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/{{ item }}"
+    state: directory
+  loop: 
+    - "/usr/local/bin/"
+    - "/lib/systemd/system/"
+    - "/etc/"
+    - "DEBIAN"
+
+- name: "PEERVPN - deb | Copy bin to deb struct"
+  copy:
+    src: "{{ build_dir }}/peervpn"
+    dest: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/usr/local/bin/"
+    remote_src: yes
+    mode: '0755'
+
+- name: "PEERVPN - deb | Copy conf to deb struct"
+  copy:
+    src: "peervpn.conf"
+    dest: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/etc/peervpn.conf"
+    mode: '0644'
+
+- name: "PEERVPN - deb | Copy service to deb struct"
+  copy:
+    src: "peervpn.service"
+    dest: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/lib/systemd/system/peervpn.service"
+    mode: '0644'
+
+- name: "PEERVPN - deb | control template"
+  template:
+    src: 'control.j2'
+    dest: '{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/DEBIAN/control'
+
+- name: "PEERVPN - deb | Buld deb"
+  shell:
+    cmd: "cd {{ build_dir }}/deb/ && dpkg-deb --build peervpn_{{ peervpn_ver }}"

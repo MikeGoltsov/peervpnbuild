@@ -1,0 +1,4 @@
+---
+build_dir: "/tmp/buld"
+libssl_ver: "libressl-2.5.1"
+libssl_url: "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL"
