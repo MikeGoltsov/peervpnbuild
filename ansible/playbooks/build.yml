@@ -2,6 +2,8 @@
 - hosts: builder
   gather_facts: no
   become: true
+  vars:
+      http_repo: true
   pre_tasks:        
     - name: install packages
       apt:
@@ -12,6 +14,7 @@
         - make
         - gcc
         - git
+        - gzip
         - dpkg-dev
       
     - name: Check if libssl has build
@@ -24,3 +27,19 @@
         when: not libssl_buld.stat.exists
 
       - role: peervpn  # build peervpn bin
+
+      - role: repo
+        when: http_repo
+        tags: 
+          - repo
+      
+  post_tasks: 
+    - name: add peervpn repo
+      apt_repository:
+        filename: peervpn
+        repo: "deb [trusted=yes] http://127.0.0.1/peervpn ./"
+          
+    - name: install peervpn
+      apt:
+        name: "peervpn"
+        update_cache: yes

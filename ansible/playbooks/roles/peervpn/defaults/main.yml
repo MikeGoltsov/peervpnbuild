@@ -2,3 +2,4 @@
 build_dir: "/tmp/buld"
 libssl_ver: "libressl-2.5.1"
 peervpn_ver: "0.044"
+deb_clean_dir: false

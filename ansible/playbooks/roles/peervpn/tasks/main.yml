@@ -9,10 +9,17 @@
     repo: 'https://github.com/peervpn/peervpn.git'
     dest: "{{ build_dir }}/peervpnsrc"
     force: true
+  register: git
 
 - name: "PEERVPN | Buld"
   shell:
     cmd: "cd {{ build_dir }}/peervpnsrc && cc -O2 -I{{ build_dir }}/libssl/{{ libssl_ver }}/include peervpn.c -o {{ build_dir }}/peervpn {{ build_dir }}/libssl/{{ libssl_ver }}/crypto/.libs/libcrypto.a -lpthread" 
+  when: git.changed
+
+- name: "PEERVPN | clean deb struct"
+  set_fact:
+    deb_clean_dir: true
+  when: git.changed
 
 - import_tasks: deb.yml
   tags: deb

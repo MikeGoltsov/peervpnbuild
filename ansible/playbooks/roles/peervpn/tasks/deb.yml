@@ -1,4 +1,10 @@
 ---
+- name: "PEERVPN - deb | clean directory"
+  file:
+    path: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}"
+    state: absent
+  when: deb_clean_dir|bool
+
 - name: "PEERVPN - deb | Create a directory if it does not exist"
   file:
     path: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/{{ item }}"
@@ -12,9 +18,10 @@
 - name: "PEERVPN - deb | Copy bin to deb struct"
   copy:
     src: "{{ build_dir }}/peervpn"
-    dest: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/usr/local/bin/"
+    dest: "{{ build_dir }}/deb/peervpn_{{ peervpn_ver }}/usr/local/bin/peervpn"
     remote_src: yes
     mode: '0755'
+  register: bin
 
 - name: "PEERVPN - deb | Copy conf to deb struct"
   copy:
@@ -36,3 +43,4 @@
 - name: "PEERVPN - deb | Buld deb"
   shell:
     cmd: "cd {{ build_dir }}/deb/ && dpkg-deb --build peervpn_{{ peervpn_ver }}"
+  when: bin.changed
